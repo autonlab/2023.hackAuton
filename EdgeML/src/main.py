@@ -1,4 +1,4 @@
-from PyTorch_CIFAR10.cifar10_models.resnet import resnet18
+from src.model_arch import resnet18
 from torchsummary import summary
 
 # Untrained model
