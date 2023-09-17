@@ -1,4 +1,4 @@
-# CRATE (Coding RAte reduction TransformEr)
+# Interpretable Medical Image Transformers using CRATE
 This repository is the for HackAuton Submission by Saaketh Medepalli, Hemit Shah and Sai Koushik Guntakanti
 
 ## Presentation
