@@ -1,0 +1,156 @@
+\documentclass{article}
+
+
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}		% Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+
+
+
+\title{AI Trustworthiness Using Retrieval Augmented Generation for Polite Patient Prescription Explanatory Texts}
+
+\date{September 17, 2023}	% Here you can change the date presented in the paper title
+%\date{} 					% Or removing it
+
+\author{{Robert Devenyi}\\
+	Carnegie Mellon University\\
+	Pittsburgh, PA 15213 \\
+	\texttt{rdevenyi@andrew.cmu.edu} \\
+	%% examples of more authors
+        \And
+        {Haochen Yang} \\
+	Carnegie Mellon University\\
+	Pittsburgh, PA 15213\\
+	\texttt{hy3@andrew.cmu.edu} \\
+ 	\And
+	{John Turner-Smith} \\
+	Carnegie Mellon University\\
+	Pittsburgh, PA 15213\\
+	\texttt{jturners@andrew.cmu.edu} \\
+        \And
+        {Hayden Stec\thanks{Report produced with the support of Auton Lab for their 30th Anniversary "hackAuton" hackathon}} \\
+	Carnegie Mellon University\\
+	Pittsburgh, PA 15213\\
+	\texttt{hstec@andrew.cmu.edu} \\
+	%% \AND
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+}
+
+% Uncomment to remove the date
+%\date{}
+
+% Uncomment to override  the `A preprint' in the header
+%\renewcommand{\headeright}{Technical Report}
+%\renewcommand{\undertitle}{Technical Report}
+% Adding different title - to make it blank
+\renewcommand{\headeright}{}
+\renewcommand{\undertitle}{}
+\renewcommand{\shorttitle}{Trustworthiness with RAG}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+\hypersetup{
+pdftitle={E},
+pdfsubject={q-bio.NC, q-bio.QM},
+pdfauthor={Robert Devenyi, John Turner-Smith, Haochen Yang, Hayden Stec},
+pdfkeywords={LLMs, ChatGPT, Transformer, Foundation Models, AI Safety, Retrieval Augmented Generation},
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The potential risks and rewards of introducing black box foundation models into medical interventions are great. Care must be taken in considering which interventions are appropriate for these models and how to best ensure patient safety and trust in the system. We utilize retrieval augmented generation to prompt large language models with factually correct information supported by an external database. Our application in generating polite, patient-forward text demonstrates a concrete and reliable step in trustworthy, transparent application of large language models for explaining medications to patients.
+\end{abstract}
+
+
+% keywords can be removed
+\keywords{LLMs \and GPT-4 \and Foundation Models \and AI Trust \and Patient Safety \and Retrieval Augmented Generation \and Prescription Medication}
+
+
+\section{Introduction}
+Since the COVID-19 pandemic, trust in medical doctors, scientists, and the healthcare industry has declines significantly \citep{pew2022trust}. Trust in medicine is difficult to rebuild, however small steps can be made using safe, trustworthy technology that can enhance patients' healthcare experience. Often in online healthcare management systems, multiple touch-points exist to connect patients with healthcare professionals, but difficulties in communication, assumptions regarding prior knowledge, and more can negatively impact patients' experience, and in the worst case lead to malpractice \citep{humphrey2022malpractice}. Foundation models such as GPT-4 have already proven the ability to perform on standardized medical examinations and show broad medical domain knowledge \citealp{openai2023gpt4}. In this paper, we introduce DRAI, an implementation of retrieval augmented generation (RAG) to improve upon GPT-4's capabilities in generating patient-froward explanatory text about new diagnoses, prescriptions, and other additions to a patient's medical record. We also examine DRAI in a comparison against a non-RAG prompting of GPT-4 and evaluate the two for a number of metrics.
+
+\section{Background}
+\paragraph{AI Safety and Trust.} LLMs and other foundation models, despite their power and broad applicability, are prone to \emph{hallucinations}, or generation of false 'facts' and use of faulty reasoning \citep{openai2023gpt4, li2023trac, chen2023benchmarking}. Hallucinations are likely to degrade trust in AI systems, but RAG has had promising results in improving accuracy and transparency of texts \citep{li2023trac, lewis2021retrievalaugmented,chen2023benchmarking}. These recent developments provide the opportunity to expand usage of foundation models into the medical field in a manner conscious of the need for maintenance of patient trust in healthcare. In the paragraph below, we describe how these developments might impact medicine.
+\paragraph{Patient Safety.} Trust is a foundational component of the patient-doctor/healthcare relationship, and its decrease results in decreased health outcomes \citep{birkhauer2017trust,pearson2000patients}. With advances in RAG, and overall improvements in foundation models, these tools might now be able to be implemented into medical apparatuses while still maintaining or perhaps improving general trust in medicine. Prior work using LLMs have found that LLMs without modifications such as fine tuning under-perform in specialized domains like medicine \citep{Gutierrez2022ThinkingAG}. Trust is also maintained by interpersonal politeness and clarity, which doctors often struggle to find a balance between \citep{aronsson1987politeness}. However, recent work in the domain of autonomous vehicles finds that these interpersonal metrics can also apply to AI agents \citep{Lee2022polite}. With this in mind, our work hopes to extend this analysis by examining whether an LLM given prompts with factual data confirmed by a pre-existing database can outperform the standard model without retrieval augmentation in accuracy, as well as politeness and clarity.
+
+\section{Methods}
+Our work leverages Open AI's GPT-4 foundation model via the Open AI API. As a proof of concept, our work relied on data from the openFDA database, a freely available API for products approved by the FDA.\footnote[1]{\url{https://open.fda.gov/}} First, we used openFDA to randomly generate a list of prescription medications for testing. Then, we generated two prompts for each prescription medication: one our benchmark condition and the other our experimental condition. Our benchmark consisted of prompting GPT-4 with the name of the prescription medication and that it should respond with an explanation of the medication relevant for a hypothetical patient. The experimental condition consisted of a similar prompt, but with the inclusion of relevant data-points from the openFDA entry for that prescription medication. We then prompted GPT-4 to include these facts. We then iterated across these data in a blind comparison on correctness, politeness, and clarity. 
+
+First, we randomly selected a diverse set of prescription medications using the openFDA database, aiming to cover a variety of medical conditions and treatment types.
+\paragraph{Prompt Generation:}For each selected medication, we constructed two distinct prompts for interaction with the GPT-4 model, representing benchmark and experimental conditions. \begin{itemize}
+    \item Benchmark Condition Prompt: This prompt gave only the name of the prescription medication and instructed GPT-4 to generate an explanation relevant to patients.
+    \item Experimental Condition Prompt: This prompt included not only the medication name but also integrated pertinent data points sourced from the openFDA entry for the corresponding prescription medication. GPT-4 was directed to incorporate these factual data into its response. This integration of openFDA data is aimed at retrieval generated augmentation of the prompt itself, ensuring verified and factual information about the prescription medication, its usual dosage and warnings, and more.
+\end{itemize}
+After presenting the prompts, we collected the generated text and organized it according to which medication it was in response.
+A blind comparative analysis was conducted to assess the correctness, politeness, and clarity of the responses generated by GPT-4 under the benchmark and experimental conditions.
+
+\section{Results}
+Preliminary results indicate a general increase in accuracy. DRAI implementation of RAG on GPT-4 outperforms the benchmark GPT-4, but with increased accuracy there also resulted a lack of clarity for the patient. Data was presented to the user that was not necessarily relevant, and the openFDA data it was drawing upon appears to contain acronyms and other technical terms that DRAI would use without explaining. As a result, although the benchmark GPT-4 was less accurate, and even prone to hallucinations, it performed better on clarity. Neither DRAI nor GPT-4 performed significantly higher than the other on politeness.
+
+\section{Discussion}
+DRAI ultimately performed well according to the primary goal of achieving accuracy and minimizing hallucinations. 
+
+With this initial work complete, our team hopes to proceed to build upon this system. Future work might integrate a patient's medical history as a consideration for the generation of explanations, drawing connections between pre-existing conditions and listed side effects and warnings. Additionally, prior work regarding incorporation of research papers through directional stimulus prompting would allow for explanatory texts to continually integrate new information, and perhaps even provide citations \citep{li2023guiding}.
+As DRAI becomes more robust, we hope to integrate this or similar systems into patient-facing portions of electronic healthcare management systems, allowing patients to easily access trustworthy, patient, and clear explanations of new prescriptions and diagnoses.
+
+\section{Acknowledgements}
+This work was supported by Auton Lab during hackAuton 2023, generously supported by Andrew Moore and Mary Soon Lee, Carnegie Mellon University, Pittsburgh Regional Health Initiative, Globodon, Edwards, Auton Systems, Kan Deng, Marinus Analytics, Madalina Fiterau, DE Shaw and Co., Devon and David Pablo Cohn, and the Patient Safety Technology Challenge. Thanks to Auton Lab and all the hackathon sponsors for providing the space, mentorship, and resources needed for this project.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+
+
+%%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
+% \begin{thebibliography}{1}
+
+% 	\bibitem{kour2014real}
+% 	George Kour and Raid Saabne.
+% 	\newblock Real-time segmentation of on-line handwritten arabic script.
+% 	\newblock In {\em Frontiers in Handwriting Recognition (ICFHR), 2014 14th
+% 			International Conference on}, pages 417--422. IEEE, 2014.
+
+% 	\bibitem{kour2014fast}
+% 	George Kour and Raid Saabne.
+% 	\newblock Fast classification of handwritten on-line arabic characters.
+% 	\newblock In {\em Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
+% 			International Conference of}, pages 312--318. IEEE, 2014.
+
+% 	\bibitem{hadash2018estimate}
+% 	Guy Hadash, Einat Kermany, Boaz Carmeli, Ofer Lavi, George Kour, and Alon
+% 	Jacovi.
+% 	\newblock Estimate and replace: A novel approach to integrating deep neural
+% 	networks with existing applications.
+% 	\newblock {\em arXiv preprint arXiv:1804.09028}, 2018.
+
+% \end{thebibliography}
+
+
+\end{document}
