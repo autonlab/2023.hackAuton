@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize the OpenAI API with your API key
 import openai
-openai.api_key = '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'
+openai.api_key = ''
 
 prompt = """I am a doctor, I would like you to check my prescription:
 medical history: Hypertension, Type 2 Diabetes, and Asthma.
