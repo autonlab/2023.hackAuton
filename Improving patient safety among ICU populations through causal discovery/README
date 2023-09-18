@@ -1,0 +1,9 @@
+## References
+
+Code was based from Kevin's personal repos at https://github.com/kevinsbello/iscan, https://github.com/kevinsbello/dagma.
+
+Additional libraries used:
+https://matplotlib.org/
+https://networkx.org/
+https://pandas.pydata.org/
+https://pytorch.org/
